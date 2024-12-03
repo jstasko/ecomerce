@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stasko.ecomerce.common.constants.CommonConstants;
 import sk.stasko.ecomerce.common.dto.PaginationDto;
 import sk.stasko.ecomerce.common.dto.PaginationRequest;
 import sk.stasko.ecomerce.common.dto.ResponseDto;
@@ -39,7 +40,7 @@ public class CategoryController {
         categoryService.save(entity);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto(CategoryConstants.MESSAGE_201));
+                .body(new ResponseDto(CommonConstants.MESSAGE_201));
     }
 
     @PutMapping("/public/categories/{categoryId}")
@@ -48,11 +49,11 @@ public class CategoryController {
         if (isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(CategoryConstants.MESSAGE_200));
+                    .body(new ResponseDto(CommonConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(CategoryConstants.MESSAGE_417_UPDATE));
+                    .body(new ResponseDto(CommonConstants.MESSAGE_417_UPDATE));
         }
     }
 
@@ -62,11 +63,11 @@ public class CategoryController {
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(CategoryConstants.MESSAGE_200));
+                    .body(new ResponseDto(CommonConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(CategoryConstants.MESSAGE_417_DELETE));
+                    .body(new ResponseDto(CommonConstants.MESSAGE_417_DELETE));
         }
     }
 }

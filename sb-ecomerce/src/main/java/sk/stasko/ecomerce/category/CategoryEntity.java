@@ -1,13 +1,14 @@
 package sk.stasko.ecomerce.category;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import sk.stasko.ecomerce.common.entity.BaseEntity;
+import sk.stasko.ecomerce.product.ProductEntity;
+
+import java.util.List;
+
 
 @Entity(name = "categories")
 @Getter @Setter @ToString
@@ -15,9 +16,13 @@ import sk.stasko.ecomerce.common.entity.BaseEntity;
 public class CategoryEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
+    private Long id;
 
     @NotBlank
     @Size(min = 5, message = "Category name must contain at least 5 characters")
     private String categoryName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<ProductEntity> products;
 }

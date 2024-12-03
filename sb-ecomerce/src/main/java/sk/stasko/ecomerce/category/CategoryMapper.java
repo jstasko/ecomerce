@@ -8,8 +8,9 @@ import org.mapstruct.factory.Mappers;
 public interface CategoryMapper {
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
+    @Mapping(source = "id", target = "id")
     CategoryDto toDto(CategoryEntity category);
 
-    @Mapping(target = "categoryId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     CategoryEntity toEntity(CategoryDto categoryDto);
 }
