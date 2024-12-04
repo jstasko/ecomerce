@@ -10,12 +10,14 @@ import sk.stasko.ecomerce.product.ProductEntity;
 import java.util.List;
 
 
-@Entity(name = "categories")
+@Entity()
+@Table(name = "categories")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
 public class CategoryEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Long id;
 
     @NotBlank

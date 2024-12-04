@@ -6,16 +6,19 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import sk.stasko.ecomerce.category.CategoryEntity;
 import sk.stasko.ecomerce.common.entity.BaseEntity;
+import sk.stasko.ecomerce.user.UserEntity;
 
 import java.math.BigDecimal;
 
-@Entity(name = "products")
+@Entity()
+@Table(name = "products")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
 public class ProductEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long productId;
 
     @NotBlank()
@@ -31,8 +34,12 @@ public class ProductEntity extends BaseEntity {
     private Integer quantity;
     private BigDecimal specialPrice;
 
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     @ManyToOne()
     @ToString.Exclude
     private CategoryEntity category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private UserEntity seller;
 }
