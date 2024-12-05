@@ -10,10 +10,7 @@ import sk.stasko.ecomerce.common.entity.BaseEntity;
 import sk.stasko.ecomerce.product.ProductEntity;
 import sk.stasko.ecomerce.role.RoleEntity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity()
 @Table(
@@ -45,7 +42,7 @@ public class UserEntity extends BaseEntity {
     private String username;
 
     @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = {CascadeType.MERGE},
             fetch = FetchType.EAGER
     )
     @JoinTable(
@@ -68,4 +65,10 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<ProductEntity> products = new HashSet<>();
+
+    public UserEntity(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
 }

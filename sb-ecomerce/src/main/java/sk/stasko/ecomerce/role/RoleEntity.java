@@ -18,4 +18,8 @@ public class RoleEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", length = 20)
     private AppRole roleName;
+
+    public RoleEntity(AppRole roleName) {
+        this.roleName = roleName;
+    }
 }

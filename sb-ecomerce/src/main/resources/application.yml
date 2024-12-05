@@ -15,6 +15,9 @@ spring:
       database-platform: org.hibernate.dialect.H2Dialect
   application:
     name: "e-commerce"
+  app:
+    jwt-expiration-ms: 30000000
+    jwt-secret: TB2eOxdG+mX3YVYmVsVrxQkSz8JfEV6v9CsktZp2EqU=
 
 
 management:
@@ -30,4 +33,4 @@ management:
   endpoint:
     health:
       probes:
-        enabled: true
+
