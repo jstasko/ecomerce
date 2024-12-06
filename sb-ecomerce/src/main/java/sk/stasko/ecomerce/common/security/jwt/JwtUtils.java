@@ -3,12 +3,16 @@ package sk.stasko.ecomerce.common.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 import sk.stasko.ecomerce.common.properties.JwtProperties;
+import sk.stasko.ecomerce.common.security.service.UserDetailsImpl;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
@@ -20,6 +24,24 @@ import java.util.Date;
 public class JwtUtils {
     
     private final JwtProperties jwtProperties;
+
+    public String getJwtFromCoockie(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, jwtProperties.getJwtCookieName());
+        return cookie != null ? cookie.getValue() : null;
+    }
+
+    public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
+        String jwt = generateTokenFromUsername(userDetails.getUsername());
+        return ResponseCookie.from(jwtProperties.getJwtCookieName(), jwt)
+                .path("/api")
+                .maxAge(24 * 60 * 60)
+                .httpOnly(false)
+                .build();
+    }
+
+    public ResponseCookie getCleanJwtCookie() {
+        return ResponseCookie.from(jwtProperties.getJwtCookieName()).path("/api").build();
+    }
     
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -30,8 +52,7 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(UserDetails userDetails) {
-        String username = userDetails.getUsername();
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
