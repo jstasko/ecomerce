@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import sk.stasko.ecomerce.adress.AddressEntity;
+import sk.stasko.ecomerce.cart.CartEntity;
 import sk.stasko.ecomerce.common.entity.BaseEntity;
 import sk.stasko.ecomerce.product.ProductEntity;
 import sk.stasko.ecomerce.role.RoleEntity;
@@ -41,30 +42,21 @@ public class UserEntity extends BaseEntity {
     @Size(max = 20)
     private String username;
 
-    @ManyToMany(
-            cascade = {CascadeType.MERGE},
-            fetch = FetchType.EAGER
-    )
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
 
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
-    @JoinTable(name = "user_address",
-        joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id")
-    )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
     @ToString.Exclude
     private List<AddressEntity> addresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    @ToString.Exclude
+    @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true) @ToString.Exclude
     private Set<ProductEntity> products = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true) @ToString.Exclude
+    private CartEntity cart;
 
     public UserEntity(String email, String password, String username) {
         this.email = email;

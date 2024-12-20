@@ -7,6 +7,9 @@ public interface CategoryService {
     PaginationDto<CategoryDto> findAll(PaginationRequest paginationRequest);
     void save(CategoryDto entity);
     boolean update(Long id, CategoryDto entity);
+
+    CategoryEntity findEntityById(Long categoryId);
+
     CategoryDto findById(Long id);
     boolean deleteById(Long id);
 }

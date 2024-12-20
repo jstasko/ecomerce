@@ -6,6 +6,7 @@ import sk.stasko.ecomerce.common.dto.PaginationRequest;
 
 public interface ProductService {
     PaginationDto<ProductDto> findAll(PaginationRequest paginationRequest);
+    ProductEntity retrieveCorrectProduct(Long id, Integer quantity);
     void save(Long categoryId, ProductDto entity);
     boolean update(Long productId, ProductDto productDto);
     PaginationDto<ProductDto> findByCategoryId(Long categoryId, PaginationRequest paginationRequest);

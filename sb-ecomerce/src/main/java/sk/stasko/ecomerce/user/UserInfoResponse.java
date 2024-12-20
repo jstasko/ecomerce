@@ -1,4 +1,4 @@
-package sk.stasko.ecomerce.auth;
+package sk.stasko.ecomerce.user;
 
 import java.util.List;
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import sk.stasko.ecomerce.common.dto.ErrorResponseDto;
 import sk.stasko.ecomerce.common.security.jwt.JwtUtils;
 import sk.stasko.ecomerce.common.security.service.UserDetailsImpl;
+import sk.stasko.ecomerce.user.UserInfoResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -11,6 +11,7 @@ import sk.stasko.ecomerce.common.dto.PaginationDto;
 import sk.stasko.ecomerce.common.dto.PaginationRequest;
 import sk.stasko.ecomerce.common.exception.EntityAlreadyExists;
 import sk.stasko.ecomerce.common.exception.ResourceNotFoundException;
+import sk.stasko.ecomerce.common.util.DbUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public PaginationDto<CategoryDto> findAll(PaginationRequest paginationRequest) {
-        Sort sortAndOrderBy = paginationRequest.sortOrder().equalsIgnoreCase("asc")
-                ? Sort.by(paginationRequest.sortBy()).ascending() : Sort.by(paginationRequest.sortBy()).descending();
+        Sort sortAndOrderBy = DbUtil.getSortForPagination(paginationRequest);
         Pageable pageDetails = PageRequest.of(paginationRequest.page(), paginationRequest.limit(), sortAndOrderBy);
 
         log.info("Fetching all users");
@@ -48,10 +48,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto findById(Long categoryId) {
-        log.info("Fetching user with id: {}", categoryId);
-        CategoryEntity category = iCategoryRepository.findById(categoryId)
+    public CategoryEntity findEntityById(Long categoryId) {
+        return iCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId.toString()));
+    }
+
+    @Override
+    public CategoryDto findById(Long categoryId) {
+        log.info("Fetching category with id: {}", categoryId);
+        CategoryEntity category = findEntityById(categoryId);
         return CategoryMapper.INSTANCE.toDto(category);
     }
 

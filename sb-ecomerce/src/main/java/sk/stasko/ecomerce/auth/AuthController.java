@@ -6,14 +6,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import sk.stasko.ecomerce.common.dto.ResponseDto;
-import sk.stasko.ecomerce.common.security.service.UserDetailsImpl;
+import sk.stasko.ecomerce.user.UserInfoResponse;
 import sk.stasko.ecomerce.user.UserService;
-
-import java.util.List;
 
 
 @RestController

@@ -82,6 +82,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ProductNotAvailableException.class)
+    public ResponseEntity<ErrorResponseDto> handleProductNotAvailableException(ProductNotAvailableException exception,
+                                                                            WebRequest webRequest) {
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(EntityAlreadyExists.class)
     public ResponseEntity<ErrorResponseDto> handleCardAlreadyExistsException(EntityAlreadyExists exception,
                                                                              WebRequest webRequest){

@@ -10,6 +10,6 @@ public interface ProductMapper {
 
     ProductDto toDto(ProductEntity productEntity);
 
-    @Mapping(target = "productId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     ProductEntity toEntity(ProductEntity categoryDto);
 }

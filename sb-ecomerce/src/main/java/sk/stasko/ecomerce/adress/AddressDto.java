@@ -1,23 +1,19 @@
 package sk.stasko.ecomerce.adress;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import sk.stasko.ecomerce.common.entity.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import sk.stasko.ecomerce.user.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity()
-@Table(name = "addresses")
-@Getter @Setter @ToString
-@NoArgsConstructor @AllArgsConstructor
-public class AddressEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id")
+@Data
+@AllArgsConstructor @NoArgsConstructor
+public class AddressDto {
+
     private Long id;
 
     @NotBlank
@@ -41,10 +37,8 @@ public class AddressEntity extends BaseEntity {
     private String country;
 
     @NotBlank
-    @Size(min = 2, message = "Pincode must be at least 2 characters")
+    @Size(min = 6, message = "Pincode must be at least 2 characters")
     private String pincode;
 
-    @ManyToMany(mappedBy = "addresses")
-    @ToString.Exclude
     private List<UserEntity> users = new ArrayList<>();
 }
