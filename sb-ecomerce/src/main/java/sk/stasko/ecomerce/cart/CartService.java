@@ -26,12 +26,8 @@ import static sk.stasko.ecomerce.common.util.DbUtil.getSortForPagination;
 @RequiredArgsConstructor
 @Slf4j
 public class CartService {
-    private final CartItemRepository iCartItemRepository;
     private final CartRepository iCartRepository;
-
     private final UserService iUserService;
-    private final ProductService iProductService;
-
     private final CartMapper cartMapper;
 
     public CartEntity findById(Long id) {
@@ -39,23 +35,10 @@ public class CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("CartEntity", "id", id.toString()));
     }
 
-    public CartItemEntity findByProductIdAndCartId(Long productId, Long cartId) {
-        return iCartItemRepository.findByProductIdAndCartId(productId, cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("CartItem", "productId,cartId", productId + "," + cartId));
-    }
-
-    @Transactional
-    public CartDto addProductAndQuantityToTheCart(Long productId, Integer quantity) {
-        ProductEntity productEntity = iProductService.retrieveCorrectProduct(productId, quantity);
-        CartEntity cart = createCartEntity();
-        createCartItemEntity(productEntity, cart, quantity);
-
-        var contractedBigDecimalPrice = productEntity.getSpecialPrice().multiply(BigDecimal.valueOf(quantity));
-        cart.setTotalPrice(contractedBigDecimalPrice);
-
-        var savedCart = iCartRepository.save(cart);
-        log.info("Saved cart {}", savedCart);
-        return cartMapper.toDto(savedCart);
+    public CartDto saveCartEntity(CartEntity cartEntity) {
+        var savedEntity = iCartRepository.save(cartEntity);
+        log.info("Saved cart {}", savedEntity);
+        return cartMapper.toDto(savedEntity);
     }
 
     public PaginationDto<CartDto> listOfAllCarts(PaginationRequest paginationRequest) {
@@ -87,71 +70,6 @@ public class CartService {
     }
 
     @Transactional
-    public CartDto updateQuantityOfProductInCart(Long productId, Integer quantity) {
-        var userCart = getUserCart();
-        CartEntity cartEntity = this.findById(userCart.getId());
-        ProductEntity productEntity = iProductService.retrieveCorrectProduct(productId, quantity);
-        CartItemEntity cartItemEntity = findByProductIdAndCartId(productId, cartEntity.getId());
-
-        cartItemEntity.setProductPrice(productEntity.getSpecialPrice());
-        cartItemEntity.setQuantity(cartItemEntity.getQuantity() + quantity);
-        cartItemEntity.setDiscount(productEntity.getDiscount());
-        var operationPrice = cartItemEntity.getProductPrice().multiply(BigDecimal.valueOf(quantity));
-        cartEntity.setTotalPrice(cartEntity.getTotalPrice().add(operationPrice));
-
-        iCartRepository.save(cartEntity);
-        CartItemEntity updatedCartItemEntity = iCartItemRepository.save(cartItemEntity);
-        if (updatedCartItemEntity.isEmpty()) {
-            iCartItemRepository.deleteById(updatedCartItemEntity.getCartProductId());
-        }
-
-        return cartMapper.toDto(cartEntity);
-    }
-
-    @Transactional
-    public void removeSpecificProductFromCart(Long productId, Long cartId) {
-        var cartEntity = this.findById(cartId);
-        var cartItemEntity = findByProductIdAndCartId(productId, cartId);
-
-        var valueToSubtract = cartItemEntity.getProductPrice().multiply(BigDecimal.valueOf(cartItemEntity.getQuantity()));
-        cartEntity.setTotalPrice(cartEntity.getTotalPrice().subtract(valueToSubtract));
-
-        iCartItemRepository.deleteCartItemEntityByProductIdAndCartId(productId, cartId);
-    }
-
-    private void createCartItemEntity(ProductEntity productEntity, CartEntity cartEntity, Integer quantity) {
-        if (iCartItemRepository.existsByProductIdAndCartId(productEntity.getId(), cartEntity.getId())) {
-            throw new EntityAlreadyExists("Product with productName " + productEntity.getProductName() + " already exists in cart");
-        }
-
-        CartItemEntity newCartItem = new CartItemEntity();
-        newCartItem.setProduct(productEntity);
-        newCartItem.setCart(cartEntity);
-        newCartItem.setQuantity(quantity);
-        newCartItem.setDiscount(productEntity.getDiscount());
-        newCartItem.setProductPrice(productEntity.getSpecialPrice());
-        iCartItemRepository.save(newCartItem);
-
-        cartEntity.getCartItems().add(newCartItem);
-
-        log.info("CartItem consist of productName {} was placed into Cart", productEntity.getProductName());
-    }
-
-    private CartEntity createCartEntity() {
-        var loggedUser = iUserService.fetchLoggedUser();
-        var cartEntity =  iCartRepository.findCartByEmail(loggedUser.getEmail())
-                .orElseGet(() -> {
-                    CartEntity cart = new CartEntity();
-                    cart.setTotalPrice(BigDecimal.ZERO);
-                    cart.setUser(loggedUser);
-                    return iCartRepository.save(cart);
-                });
-
-        log.info("Created new cart for user loggedUser = {}", loggedUser.getEmail());
-        return cartEntity;
-    }
-
-    @Transactional
     public void updateProductInCarts(Long productId, BigDecimal productPrice) {
         List<CartEntity> cartEntities = this.iCartRepository.findCartsByProductId(productId);
         for (CartEntity cart : cartEntities) {
@@ -164,5 +82,19 @@ public class CartService {
         iCartRepository.saveAll(cartEntities);
         log.info("Updated carts total ...");
 
+    }
+
+    public CartEntity createCartEntity() {
+        var loggedUser = iUserService.fetchLoggedUser();
+        var cartEntity =  iCartRepository.findCartByEmail(loggedUser.getEmail())
+                .orElseGet(() -> {
+                    CartEntity cart = new CartEntity();
+                    cart.setTotalPrice(BigDecimal.ZERO);
+                    cart.setUser(loggedUser);
+                    return iCartRepository.save(cart);
+                });
+
+        log.info("Created new cart for user loggedUser = {}", loggedUser.getEmail());
+        return cartEntity;
     }
 }

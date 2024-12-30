@@ -22,13 +22,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import sk.stasko.ecomerce.common.security.jwt.AuthEntryPointJwt;
 import sk.stasko.ecomerce.common.security.jwt.AuthTokenFilter;
 import sk.stasko.ecomerce.common.security.jwt.JwtUtils;
-import sk.stasko.ecomerce.role.AppRole;
-import sk.stasko.ecomerce.role.RoleEntity;
+import sk.stasko.ecomerce.common.util.DbUtil;
+import sk.stasko.ecomerce.payment.PaymentRepository;
 import sk.stasko.ecomerce.role.RoleRepository;
-import sk.stasko.ecomerce.user.UserEntity;
 import sk.stasko.ecomerce.user.UserRepository;
-
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -99,49 +96,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return args -> {
-            try {
-                // Initialize roles
-                RoleEntity userRole = getOrCreateRole(roleRepository, AppRole.ROLE_USER);
-                RoleEntity sellerRole = getOrCreateRole(roleRepository, AppRole.ROLE_SELLER);
-                RoleEntity adminRole = getOrCreateRole(roleRepository, AppRole.ROLE_ADMIN);
-
-                Set<RoleEntity> userRoles = Set.of(userRole);
-                Set<RoleEntity> sellerRoles = Set.of(sellerRole, userRole);
-                Set<RoleEntity> adminRoles = Set.of(adminRole, sellerRole, userRole);
-
-                // Initialize users
-                createUserIfNotExists(userRepository, passwordEncoder, "user1", "user1@gmail.com", "passwordUser", userRoles);
-                createUserIfNotExists(userRepository, passwordEncoder, "seller1", "seller1@gmail.com", "passwordSeller", sellerRoles);
-                createUserIfNotExists(userRepository, passwordEncoder, "admin1", "admin1@gmail.com", "passwordAdmin", adminRoles);
-
-                log.info("Initialization completed successfully.");
-
-            } catch (Exception ex) {
-                log.error("Error during initialization: " + ex.getMessage(), ex);
-            }
-        };
-    }
-
-    private RoleEntity getOrCreateRole(RoleRepository roleRepository, AppRole roleName) {
-        return roleRepository.findByRoleName(roleName)
-                .orElseGet(() -> {
-                    RoleEntity role = new RoleEntity(roleName);
-                    log.info("Creating role: {}", roleName);
-                    return roleRepository.save(role);
-                });
-    }
-
-    private void createUserIfNotExists(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                       String username, String email, String password, Set<RoleEntity> roles) {
-        if (!userRepository.existsByUsername(username)) {
-            UserEntity user = new UserEntity(email, passwordEncoder.encode(password), username);
-            user.setRoles(roles);
-            userRepository.save(user);
-            log.info("Created user: {}", username);
-        } else {
-            log.info("User already exists: {}", username);
-        }
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder) {
+        return args -> DbUtil.init(roleRepository, userRepository, paymentRepository, passwordEncoder);
     }
 }

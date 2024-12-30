@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stasko.ecomerce.cartItem.CartItemService;
 import sk.stasko.ecomerce.common.dto.PaginationDto;
 import sk.stasko.ecomerce.common.dto.PaginationRequest;
 import sk.stasko.ecomerce.common.dto.ResponseDto;
@@ -15,6 +16,7 @@ import sk.stasko.ecomerce.common.dto.ResponseDto;
 @Slf4j
 public class CartController {
     private final CartService cartService;
+    private final CartItemService cartItemService;
 
     @GetMapping("/carts")
     public ResponseEntity<PaginationDto<CartDto>> getAllCarts(
@@ -37,7 +39,7 @@ public class CartController {
             @PathVariable Long productId,
             @PathVariable Integer quantity
     ) {
-        var updatedCart = this.cartService.addProductAndQuantityToTheCart(productId, quantity);
+        var updatedCart = this.cartItemService.addProductAndQuantityToTheCart(productId, quantity);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCart);
     }
 
@@ -50,7 +52,7 @@ public class CartController {
 
         var quantity = CartOperation.getQuantityChangeFromString(operation);
 
-        var updatedCart = this.cartService.updateQuantityOfProductInCart(productId, quantity);
+        var updatedCart = this.cartItemService.updateQuantityOfProductInCart(productId, quantity);
         return ResponseEntity.status(HttpStatus.OK).body(updatedCart);
     }
 
@@ -59,7 +61,7 @@ public class CartController {
             @PathVariable Long cartId,
             @PathVariable Long productId
     ) {
-        this.cartService.removeSpecificProductFromCart(productId, cartId);
+        this.cartItemService.removeSpecificProductFromCart(productId, cartId);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Product was deleted from cart"));
     }
 }

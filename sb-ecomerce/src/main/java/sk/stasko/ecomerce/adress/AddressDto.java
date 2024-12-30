@@ -37,7 +37,7 @@ public class AddressDto {
     private String country;
 
     @NotBlank
-    @Size(min = 6, message = "Pincode must be at least 2 characters")
+    @Size(min = 2, message = "Pincode must be at least 2 characters")
     private String pincode;
 
     private List<UserEntity> users = new ArrayList<>();
