@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface AddressService {
     AddressDto save(AddressDto addressDto);
+    AddressEntity findById(Long id);
     PaginationDto<AddressDto> findAll(PaginationRequest paginationRequest);
     AddressDto findDtoById(Long id);
     List<AddressDto> findAddressByUser();

@@ -35,4 +35,18 @@ public class OrderItemEntity {
     public BigDecimal getCalculatedPrice() {
         return orderedProductPrice.multiply(BigDecimal.valueOf(this.quantity));
     }
+
+    public OrderItemEntity(
+            ProductEntity product,
+            Integer quantity,
+            BigDecimal discount,
+            BigDecimal orderedProductPrice,
+            OrderEntity order
+    ) {
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+        this.discount = discount;
+        this.orderedProductPrice = orderedProductPrice;
+    }
 }

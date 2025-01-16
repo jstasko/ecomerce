@@ -15,6 +15,7 @@ public interface OrderMapper {
 
     @Mapping(target = "products", source = "orderItems", qualifiedByName = "mapOrderItemsToProductDto")
     @Mapping(target = "orderStatus", expression = "java(orderEntity.getOrderStatus() + \"\")")
+    @Mapping(target = "shippingAddress", ignore = true)
     OrderDto toDto(OrderEntity orderEntity);
 
     @Named("mapOrderItemsToProductDto")

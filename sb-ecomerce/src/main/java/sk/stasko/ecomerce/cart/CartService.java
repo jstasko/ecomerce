@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.stasko.ecomerce.cartItem.CartItemEntity;
 import sk.stasko.ecomerce.cartItem.CartItemRepository;
+import sk.stasko.ecomerce.cartItem.CartItemService;
 import sk.stasko.ecomerce.common.dto.PaginationDto;
 import sk.stasko.ecomerce.common.dto.PaginationRequest;
 import sk.stasko.ecomerce.common.exception.EntityAlreadyExists;
@@ -29,6 +30,11 @@ public class CartService {
     private final CartRepository iCartRepository;
     private final UserService iUserService;
     private final CartMapper cartMapper;
+
+    public CartEntity findCartByEmail(String email) {
+        return iCartRepository.findCartByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("CartEntity", "email", email));
+    }
 
     public CartEntity findById(Long id) {
         return iCartRepository.findById(id)

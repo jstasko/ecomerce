@@ -22,6 +22,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final ProductService iProductService;
     private final CartService cartService;
 
+    @Override
     public CartItemEntity findByProductIdAndCartId(Long productId, Long cartId) {
         return iCartItemRepository.findByProductIdAndCartId(productId, cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "productId,cartId", productId + "," + cartId));

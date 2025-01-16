@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sk.stasko.ecomerce.adress.AddressDto;
 import sk.stasko.ecomerce.payment.PaymentDto;
 import sk.stasko.ecomerce.product.ProductDto;
 
@@ -24,4 +25,5 @@ public class OrderDto {
     private Double totalAmount;
     private PaymentDto payment;
     private List<ProductDto> products;
+    private AddressDto shippingAddress;
 }

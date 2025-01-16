@@ -74,7 +74,8 @@ public class AddressServiceImpl implements AddressService {
         );
     }
 
-    protected AddressEntity findById(Long id) {
+    @Override
+    public AddressEntity findById(Long id) {
         log.info("Fetching address : {}", id);
 
         return iAddressRepository.findById(id)

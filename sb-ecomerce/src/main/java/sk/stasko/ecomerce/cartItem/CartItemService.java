@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import sk.stasko.ecomerce.cart.CartDto;
 
 public interface CartItemService {
+    CartItemEntity findByProductIdAndCartId(Long productId, Long cartId);
     @Transactional
     CartDto updateQuantityOfProductInCart(Long productId, Integer quantity);
     @Transactional
